@@ -18,8 +18,9 @@ static struct client theApp;
 
 // Called after manipulating the GPIO,
 // before clean up by libgpiod
-static void client_wait(struct client* me)
+static void client_wait(void* data)
 {
+	struct client* me = (struct client*)data;  // not used yet
 	usleep(5000*1000);
 }
 
