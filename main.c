@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <gpiod.h>
 #include <unistd.h>
+#include <errno.h>
 
 // Data for the client.
 // Conventions:
@@ -28,18 +29,18 @@ int main(int argc, char* argv[])
 				if (gpiod_line_set_value(theApp.line, 1) == 0) {
 					usleep(5000*1000);
 				} else {
-					printf("gpiod_line_set_value() error\n");
+					perror("gpiod_line_set_value()");
 				}
 				gpiod_line_release(theApp.line);
 			} else {
-				printf("gpiod_line_request_output() error\n");
+				perror("gpiod_line_request_output()");
 			}
 		} else {
-			printf("gpiod_chip_get_line() error\n");
+			perror("gpiod_chip_get_line()");
 		}
 		gpiod_chip_close(theApp.chip);
 	} else {
-		printf("gpiod_chip_open() error\n");
+		perror("gpiod_chip_open()");
 	}
 	return 0;
 }
