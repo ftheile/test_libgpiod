@@ -20,31 +20,37 @@ static struct client theApp;
 
 int main(int argc, char* argv[])
 {
-	printf("Version: %s\n", gpiod_version_string());
-	theApp.chip = gpiod_chip_open("/dev/gpiochip0");
-	if (theApp.chip) {
-		theApp.line = gpiod_chip_get_line(theApp.chip, 4);
-		if (theApp.line) {
-			if (gpiod_line_request_output(theApp.line, argv[0], 0) == 0) {
-				int value = 1;
-				for (int i=0; i<10; i++) {
-					if (gpiod_line_set_value(theApp.line, value) == 0) {
-						usleep(250*1000);
-					} else {
-						perror("gpiod_line_set_value()");
+	if (argc == 2) {
+		unsigned int offset = atoi(argv[1]);
+		printf("Version: %s\n", gpiod_version_string());
+		theApp.chip = gpiod_chip_open("/dev/gpiochip0");
+		if (theApp.chip) {
+			theApp.line = gpiod_chip_get_line(theApp.chip, offset);
+			if (theApp.line) {
+				if (gpiod_line_request_output(theApp.line, argv[0], 0) == 0) {
+					int value = 1;
+					for (int i=0; i<10; i++) {
+						if (gpiod_line_set_value(theApp.line, value) == 0) {
+							usleep(250*1000);
+						} else {
+							perror("gpiod_line_set_value()");
+						}
+						value = !value;
 					}
-					value = !value;
+					gpiod_line_release(theApp.line);
+				} else {
+					perror("gpiod_line_request_output()");
 				}
-				gpiod_line_release(theApp.line);
 			} else {
-				perror("gpiod_line_request_output()");
+				perror("gpiod_chip_get_line()");
 			}
+			gpiod_chip_close(theApp.chip);
 		} else {
-			perror("gpiod_chip_get_line()");
+			perror("gpiod_chip_open()");
 		}
-		gpiod_chip_close(theApp.chip);
 	} else {
-		perror("gpiod_chip_open()");
+		printf("%s <gpio_no>\n", argv[0]);
+		printf("  <gpio_no>: GPIO number\n");
 	}
 	return 0;
 }
