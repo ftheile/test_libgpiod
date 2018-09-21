@@ -26,10 +26,14 @@ int main(int argc, char* argv[])
 		theApp.line = gpiod_chip_get_line(theApp.chip, 4);
 		if (theApp.line) {
 			if (gpiod_line_request_output(theApp.line, argv[0], 0) == 0) {
-				if (gpiod_line_set_value(theApp.line, 1) == 0) {
-					usleep(5000*1000);
-				} else {
-					perror("gpiod_line_set_value()");
+				int value = 1;
+				for (int i=0; i<10; i++) {
+					if (gpiod_line_set_value(theApp.line, value) == 0) {
+						usleep(250*1000);
+					} else {
+						perror("gpiod_line_set_value()");
+					}
+					value = !value;
 				}
 				gpiod_line_release(theApp.line);
 			} else {
