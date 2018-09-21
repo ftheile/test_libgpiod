@@ -22,7 +22,7 @@ int main(int argc, char* argv[])
 {
 	if (argc == 2) {
 		unsigned int offset = atoi(argv[1]);
-		printf("Version: %s\n", gpiod_version_string());
+		printf("libgpiod version: %s\n", gpiod_version_string());
 		theApp.chip = gpiod_chip_open("/dev/gpiochip0");
 		if (theApp.chip) {
 			theApp.line = gpiod_chip_get_line(theApp.chip, offset);
@@ -31,7 +31,7 @@ int main(int argc, char* argv[])
 					int value = 1;
 					for (int i=0; i<10; i++) {
 						if (gpiod_line_set_value(theApp.line, value) == 0) {
-							usleep(250*1000);
+							usleep(125*1000);
 						} else {
 							perror("gpiod_line_set_value()");
 						}
