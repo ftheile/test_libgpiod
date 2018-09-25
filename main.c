@@ -20,7 +20,7 @@ static struct client theApp;
 
 int main(int argc, char* argv[])
 {
-	if (argc == 2) {
+	if (argc == 3) {
 		unsigned int offset = atoi(argv[1]);
 		printf("libgpiod version: %s\n", gpiod_version_string());
 		theApp.chip = gpiod_chip_open("/dev/gpiochip0");
@@ -28,10 +28,11 @@ int main(int argc, char* argv[])
 			theApp.line = gpiod_chip_get_line(theApp.chip, offset);
 			if (theApp.line) {
 				if (gpiod_line_request_output(theApp.line, argv[0], 0) == 0) {
+					int delay = 1000 * atoi(argv[2]);
 					int value = 1;
 					for (int i=0; i<10; i++) {
 						if (gpiod_line_set_value(theApp.line, value) == 0) {
-							usleep(125*1000);
+							usleep(delay);
 						} else {
 							perror("gpiod_line_set_value()");
 						}
@@ -49,8 +50,9 @@ int main(int argc, char* argv[])
 			perror("gpiod_chip_open()");
 		}
 	} else {
-		printf("%s <gpio_no>\n", argv[0]);
+		printf("%s <gpio_no> <delay>\n", argv[0]);
 		printf("  <gpio_no>: GPIO number\n");
+		printf("  <delay>:   Delay in ms\n");
 	}
 	return 0;
 }
