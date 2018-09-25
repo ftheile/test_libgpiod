@@ -20,7 +20,7 @@ static struct client theApp;
 
 int main(int argc, char* argv[])
 {
-	if (argc == 3) {
+	if (argc == 4) {
 		unsigned int offset = atoi(argv[1]);
 		printf("libgpiod version: %s\n", gpiod_version_string());
 		theApp.chip = gpiod_chip_open("/dev/gpiochip0");
@@ -29,8 +29,9 @@ int main(int argc, char* argv[])
 			if (theApp.line) {
 				if (gpiod_line_request_output(theApp.line, argv[0], 0) == 0) {
 					int delay = 1000 * atoi(argv[2]);
+					int cnt = atoi(argv[3]);
 					int value = 1;
-					for (int i=0; i<10; i++) {
+					while (cnt--) {
 						if (gpiod_line_set_value(theApp.line, value) == 0) {
 							usleep(delay);
 						} else {
@@ -50,9 +51,10 @@ int main(int argc, char* argv[])
 			perror("gpiod_chip_open()");
 		}
 	} else {
-		printf("%s <gpio_no> <delay>\n", argv[0]);
+		printf("%s <gpio_no> <delay> <count>\n", argv[0]);
 		printf("  <gpio_no>: GPIO number\n");
 		printf("  <delay>:   Delay in ms\n");
+		printf("  <count>:   Blink count\n");
 	}
 	return 0;
 }
