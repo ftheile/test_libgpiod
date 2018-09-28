@@ -29,7 +29,7 @@ int main(int argc, char* argv[])
 			if (theApp.line) {
 				if (gpiod_line_request_output(theApp.line, argv[0], 0) == 0) {
 					int delay = 1000 * atoi(argv[2]);
-					int cnt = atoi(argv[3]);
+					int cnt = 2 * atoi(argv[3]);
 					int value = 1;
 					while (cnt--) {
 						if (gpiod_line_set_value(theApp.line, value) == 0) {
